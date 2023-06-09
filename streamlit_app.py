@@ -12,7 +12,27 @@ df = pd.read_csv(url).fillna(0.00)
 # Create dropdown menu to select team
 teams = df[['home_team', 'away_team']].stack().unique()
 
+# Define function to update table
+def update_table(team):
+    # Filter dataframe to show games where the selected team is either the home or away team
+    team_games = df[(df['home_team'] == team) | (df['away_team'] == team)]
+    team_data = team_games.copy()
 
+    odds_table = team_games[['date', 'home_team', 'away_team', 'bookmaker_name', 'home_odds', 'draw_odds', 'away_odds', 'home_odds_change', 'draw_odds_change', 'away_odds_change']]
+    odds_table = odds_table.dropna() # drop rows with missing values
+
+    # Create a new table with odds and odds changes in same cell for display
+    odds_table_D = odds_table[['date', 'home_team', 'away_team', 'bookmaker_name']].copy()
+    odds_cols = ['home_odds', 'draw_odds', 'away_odds']
+    for col in odds_cols:
+        mask = odds_table[col+'_change'] != 0
+        odds_table_D[col] = odds_table[col].astype(str)
+        odds_table_D.loc[mask, col] = odds_table_D[col].astype(str) + ' (' + odds_table.loc[mask, col+'_change'].astype(str) + ')'
+
+
+
+    # Display table
+    st.table(odds_table_D)
 
     # Calculate median odds for selected team
     if team in team_games['home_team'].unique():
@@ -58,28 +78,6 @@ teams = df[['home_team', 'away_team']].stack().unique()
     st.pyplot(fig)
     plt.close()
 
-
-# Define function to update table
-def update_table(team):
-    # Filter dataframe to show games where the selected team is either the home or away team
-    team_games = df[(df['home_team'] == team) | (df['away_team'] == team)]
-    team_data = team_games.copy()
-
-    odds_table = team_games[['date', 'home_team', 'away_team', 'bookmaker_name', 'home_odds', 'draw_odds', 'away_odds', 'home_odds_change', 'draw_odds_change', 'away_odds_change']]
-    odds_table = odds_table.dropna() # drop rows with missing values
-
-    # Create a new table with odds and odds changes in same cell for display
-    odds_table_D = odds_table[['date', 'home_team', 'away_team', 'bookmaker_name']].copy()
-    odds_cols = ['home_odds', 'draw_odds', 'away_odds']
-    for col in odds_cols:
-        mask = odds_table[col+'_change'] != 0
-        odds_table_D[col] = odds_table[col].astype(str)
-        odds_table_D.loc[mask, col] = odds_table_D[col].astype(str) + ' (' + odds_table.loc[mask, col+'_change'].astype(str) + ')'
-
-
-
-    # Display table
-    st.table(odds_table_D)
     
 team_dropdown = st.selectbox('Select Team:', teams, key='1')
 update_table(team_dropdown)
