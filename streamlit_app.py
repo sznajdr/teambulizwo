@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import streamlit as st
 import numpy as np
 
+# Read in data from CSV file
 url = 'https://raw.githubusercontent.com/sznajdr/teambulizwo/main/team_odds.csv'
 df = pd.read_csv(url).fillna(0.00)
 
@@ -29,9 +30,6 @@ def update_table(team):
         odds_table_D.loc[mask, col] = odds_table_D[col].astype(str) + ' (' + odds_table.loc[mask, col+'_change'].astype(str) + ')'
 
 
-
-    # Display table
-    st.table(odds_table_D)
 
     # Calculate median odds for selected team
     if team in team_games['home_team'].unique():
@@ -66,17 +64,12 @@ def update_table(team):
     ax2.axhline(y=0, color='grey', linestyle='--')
 
 
+    # Display table
+    st.table(odds_table_D)
+
+
     bookmaker_list = odds_table_D['bookmaker_name'].unique().tolist()
     bookmakers_text = "Bookmakers:\n" + "\n".join(bookmaker_list) # separate bookmaker list with newline character
-    ax1.text(1.15, -0.03, bookmakers_text, transform=ax1.transAxes, fontsize=12, bbox=dict(facecolor='white', edgecolor='black', pad=10.0)) # add text box with bookmaker list
-        
+    ax1.text(1.15, -0.03, bookmakers_text, transform=ax1.transAxes, fontsize=12, bbox=dict(facecolor='white', edgecolor='black', pad=10.0)) # add text box with
 
-    # Rotate x-axis labels
-    ax1.tick_params(axis='x', rotation=90)
-    plt.title(f"Odds Movement for {team}")
-    st.pyplot(fig)
-    plt.close()
 
-    
-team_dropdown = st.selectbox('Select Team:', teams, key='1')
-update_table(team_dropdown)
