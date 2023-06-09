@@ -52,7 +52,7 @@ def update_table(team):
 
     bookmaker_list = team_games['bookmaker_name'].unique().tolist()
     bookmakers_text = "Bookmakers:\n" + "\n".join(bookmaker_list) # separate bookmaker list with newline character
-    ax1.text(.82, 0.04, bookmakers_text, transform=ax1.transAxes, fontsize=12, bbox=dict(facecolor='white', edgecolor='black', pad=10.0)) # add text box with bookmaker list
+    ax1.text(+0.82, +0.04, bookmakers_text, transform=ax1.transAxes, fontsize=12, bbox=dict(facecolor='white', edgecolor='black', pad=10.0)) # add text box with bookmaker list
         
     # Rotate x-axis labels
     ax1.tick_params(axis='x', rotation=90)
