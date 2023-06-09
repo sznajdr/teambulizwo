@@ -1,13 +1,15 @@
-
 # Import necessary libraries
 import pandas as pd
 import matplotlib.pyplot as plt
 import streamlit as st
 import numpy as np
 
-# Read in data from CSV file
 url = 'https://raw.githubusercontent.com/sznajdr/teambulizwo/main/team_odds.csv'
 df = pd.read_csv(url).fillna(0.00)
+
+# Plot the odds from final df by date, Team_odds on left side of y axis and team_odds_change on right side of y axis, x axis just date
+fig, ax1 = plt.subplots(figsize=(17, 9))
+ax2 = ax1.twinx()
 
 # Create dropdown menu to select team
 teams = df[['home_team', 'away_team']].stack().unique()
@@ -29,7 +31,12 @@ def update_table(team):
         odds_table_D[col] = odds_table[col].astype(str)
         odds_table_D.loc[mask, col] = odds_table_D[col].astype(str) + ' (' + odds_table.loc[mask, col+'_change'].astype(str) + ')'
 
+    # Rotate x-axis labels
+    ax1.tick_params(axis='x', rotation=90)
 
+    # Display table
+    st.pyplot(fig)
+    plt.close()
 
     # Calculate median odds for selected team
     if team in team_games['home_team'].unique():
@@ -54,22 +61,13 @@ def update_table(team):
     team_odds_df['date'] = team_data.groupby('match_id')['date'].first().values # get the date for each game
     team_odds_df['date'] = pd.to_datetime(team_odds_df['date']) # convert date to datetime format
     team_odds_df['team_odds_change_pct'] = (team_odds_df['team_odds_change'] / team_odds_df['team_odds']) * 100
-    # Plot the odds from final df by date, Team_odds on left side of y axis and team_odds_change on right side of y axis, x axis just date
-    fig, ax1 = plt.subplots(figsize=(17, 9))
-    ax2 = ax1.twinx()
+
     ax1.plot(team_odds_df['date'], team_odds_df['team_odds'], 'g-')
     ax2.plot(team_odds_df['date'], team_odds_df['team_odds_change_pct'], 'b-')
     ax1.set_ylabel('Team Odds', color='g')
     ax2.set_ylabel('Team Odds Change in %', color='b')
     ax2.axhline(y=0, color='grey', linestyle='--')
 
-
-    # Display table
-    st.table(odds_table_D)
-
-
     bookmaker_list = odds_table_D['bookmaker_name'].unique().tolist()
     bookmakers_text = "Bookmakers:\n" + "\n".join(bookmaker_list) # separate bookmaker list with newline character
-    ax1.text(1.15, -0.03, bookmakers_text, transform=ax1.transAxes, fontsize=12, bbox=dict(facecolor='white', edgecolor='black', pad=10.0)) # add text box with
-
-
+    ax1.text(1.15, -0.03, bookmakers_text, transform=ax1.transAxes, fontsize=12, bbox=dict(facecolor='white', edgecolor='black', pad
