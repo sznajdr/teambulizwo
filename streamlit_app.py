@@ -5,9 +5,8 @@ import matplotlib.pyplot as plt
 import streamlit as st
 import numpy as np
 
-# Read in data from CSV file
-folder_name = st.text_input("Enter folder name:")
-df = pd.read_csv(f'/content/{folder_name}_odds.csv').fillna(0.00)
+url = 'https://raw.githubusercontent.com/sznajdr/teambulizwo/main/team_odds.csv'
+df = pd.read_csv(url).fillna(0.00)
 
 # Create dropdown menu to select team
 teams = df[['home_team', 'away_team']].stack().unique()
