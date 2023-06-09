@@ -17,9 +17,6 @@ def update_table(team):
     team_games = df[(df['home_team'] == team) | (df['away_team'] == team)]
     team_data = team_games.copy()
 
-    # Display table
-    st.table(team_games[['date', 'home_team', 'away_team', 'bookmaker_name', 'home_odds', 'draw_odds', 'away_odds', 'home_odds_change', 'draw_odds_change', 'away_odds_change']].dropna())
-
     # Calculate median odds for selected team
     if team in team_games['home_team'].unique():
         median_odds = team_games.groupby('match_id')['home_odds'].median()
@@ -57,16 +54,15 @@ def update_table(team):
     bookmakers_text = "Bookmakers:\n" + "\n".join(bookmaker_list) # separate bookmaker list with newline character
     ax1.text(1.15, -0.03, bookmakers_text, transform=ax1.transAxes, fontsize=12, bbox=dict(facecolor='white', edgecolor='black', pad=10.0)) # add text box with bookmaker list
         
-    # Display table
-    st.table(team_games[['date', 'home_team', 'away_team', 'bookmaker_name', 'home_odds', 'draw_odds', 'away_odds', 'home_odds_change', 'draw_odds_change', 'away_odds_change']].dropna())
-
     # Rotate x-axis labels
     ax1.tick_params(axis='x', rotation=90)
     plt.title(f"Odds Movement for {team}")
     st.pyplot(fig)
     plt.close()
 
+    # Display table
+    st.table(team_games[['date', 'home_team', 'away_team', 'bookmaker_name', 'home_odds', 'draw_odds', 'away_odds', 'home_odds_change', 'draw_odds_change', 'away_odds_change']].dropna())
+
     
 team_dropdown = st.selectbox('Select Team:', teams, key='1')
 update_table(team_dropdown)
-
