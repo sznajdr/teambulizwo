@@ -81,4 +81,3 @@ def update_table(team):
     
 team_dropdown = st.selectbox('Select Team:', teams, key='1')
 update_table(team_dropdown)
-        odds_table_D
